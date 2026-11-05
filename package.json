@@ -1,0 +1,16 @@
+{
+  "name": "@dayanruben/agent-skills-validation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Development-only discovery validation for this Agent Skills collection.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.20.0"
+  },
+  "scripts": {
+    "check:skills": "skills add . --list"
+  },
+  "devDependencies": {
+    "skills": "1.7.6"
+  }
+}

@@ -35,6 +35,18 @@ jobs:
         run: python scripts/validate_skills.py
       - name: Test the validation tooling
         run: python -m unittest discover -s tests -v
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install integrity-locked discovery CLI
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Check skills.sh discovery without installing skills
+        env:
+          DISABLE_TELEMETRY: '1'
+          XDG_STATE_HOME: ${{ runner.temp }}/skills-cli-state
+        run: npm run check:skills
 
   security:
     name: Audit workflows
