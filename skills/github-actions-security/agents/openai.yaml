@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Actions Security"
+  short_description: "Audit and harden GitHub Actions trust boundaries"
+  default_prompt: "Use $github-actions-security to audit this repository and apply the authorized GitHub Actions hardening fixes."
