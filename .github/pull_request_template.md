@@ -1,11 +1,12 @@
-## Change / Mudança
+## Change
 
-Describe the capability or correction and its sources. / Descreva a capacidade ou correção e suas fontes.
+Describe the capability or correction and its sources.
 
-## Validation / Validação
+## Validation
 
-- [ ] Manifests, relative links and relevant scripts checked. / Manifestos, links relativos e scripts pertinentes verificados.
-- [ ] Scope, authorization, credentials and network behavior reviewed. / Escopo, autorização, credenciais e comportamento de rede revisados.
-- [ ] English and PT-BR catalogs and existing translations updated. / Catálogos em inglês e PT-BR e traduções existentes atualizados.
-- [ ] Attribution and license preserved. / Atribuição e licença preservadas.
-- [ ] Checks and remaining limitations recorded. / Verificações e limitações restantes registradas.
+- [ ] Manifests, relative links and relevant scripts checked.
+- [ ] Scope, authorization, credentials and network behavior reviewed.
+- [ ] English catalog and skills.sh discovery checked.
+- [ ] Attribution and license preserved.
+- [ ] Commits signed and GitHub verification checked.
+- [ ] Checks, behavioral examples and remaining limitations recorded.

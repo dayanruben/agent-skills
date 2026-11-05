@@ -19,8 +19,7 @@ class SkillValidationTests(unittest.TestCase):
             "---\nname: example-skill\ndescription: Review example inputs.\n---\n\n# Instructions\nRead inputs.\n",
             encoding="utf-8",
         )
-        for name in ("README.md", "README.pt-BR.md"):
-            (self.root / name).write_text("[Skill](skills/example-skill/SKILL.md)\n", encoding="utf-8")
+        (self.root / "README.md").write_text("[Skill](skills/example-skill/SKILL.md)\n", encoding="utf-8")
 
     def assert_invalid(self, expected):
         _, errors = validate_repository(self.root)
@@ -66,8 +65,14 @@ class SkillValidationTests(unittest.TestCase):
         self.manifest.write_text(self.manifest.read_text() + "\n[Docs](https://example.invalid/unavailable)\n")
         self.assertEqual(validate_repository(self.root), (1, []))
 
-    def test_both_catalogs_required(self):
-        (self.root / "README.pt-BR.md").write_text("# Catalog\n")
+    def test_installed_dependency_docs_are_outside_repository_link_checks(self):
+        dependency = self.root / "node_modules" / "example"
+        dependency.mkdir(parents=True)
+        (dependency / "README.md").write_text("[Unshipped source](missing.md)\n")
+        self.assertEqual(validate_repository(self.root), (1, []))
+
+    def test_catalog_entry_required(self):
+        (self.root / "README.md").write_text("# Catalog\n")
         self.assert_invalid("missing catalog entry")
 
     def test_ui_prompt_uses_actual_skill(self):
@@ -76,7 +81,7 @@ class SkillValidationTests(unittest.TestCase):
         self.assert_invalid("must mention the skill invocation")
 
     def test_selected_skill_does_not_require_external_catalog_changes(self):
-        (self.root / "README.pt-BR.md").unlink()
+        (self.root / "README.md").unlink()
         self.assertEqual(validate_repository(self.root, "example-skill"), (1, []))
 
 

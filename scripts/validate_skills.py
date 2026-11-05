@@ -35,7 +35,7 @@ UniqueKeyLoader.add_constructor(
 NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 LINK = re.compile(r'\[[^\]\n]+\]\((?:<([^>\n]+)>|([^\s)\n]+))(?:\s+"[^"\n]*")?\)')
 FIELDS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
-SKIP = {".git", ".venv", "__pycache__"}
+SKIP = {".git", ".venv", "__pycache__", "node_modules"}
 
 
 def load_mapping(text: str) -> dict:
@@ -147,7 +147,7 @@ def validate_repository(root: Path, selected: str | None = None) -> tuple[int, l
         except (OSError, ValueError, yaml.YAMLError) as exc:
             errors.append(f"{skill}: {exc}")
     if selected is None:
-        for catalog in (root / "README.md", root / "README.pt-BR.md"):
+        for catalog in (root / "README.md",):
             if not catalog.is_file():
                 errors.append(f"missing catalog: {catalog}")
                 continue
