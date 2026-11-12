@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # merge the pull request once checks pass
+      pull-requests: write # approve and enable auto-merge on the pull request
     steps:
       - name: Read update metadata
         id: meta
