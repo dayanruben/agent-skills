@@ -7,8 +7,13 @@ on: pull_request
 
 permissions: {}
 
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   auto-merge:
+    name: Auto-merge low-risk update
     if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'dayanruben/agent-skills'
     runs-on: ubuntu-latest
     timeout-minutes: 5
