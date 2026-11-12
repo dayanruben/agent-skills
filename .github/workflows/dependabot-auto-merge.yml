@@ -1,0 +1,64 @@
+name: Dependabot auto-merge
+
+# Low-risk Dependabot updates merge on their own once the required checks pass:
+# semver patch/minor bumps of dependencies already at 1.0 or later.
+# Major updates and 0.x dependencies keep waiting for a human review.
+on: pull_request
+
+permissions: {}
+
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  auto-merge:
+    name: Auto-merge low-risk update
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'dayanruben/agent-skills'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write # merge the pull request once checks pass
+      pull-requests: write # approve and enable auto-merge on the pull request
+    steps:
+      - name: Read update metadata
+        id: meta
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+
+      - name: Classify risk
+        id: risk
+        env:
+          UPDATE_TYPE: ${{ steps.meta.outputs.update-type }}
+          PREVIOUS_VERSION: ${{ steps.meta.outputs.previous-version }}
+          DEPENDENCY_TYPE: ${{ steps.meta.outputs.dependency-type }}
+          ECOSYSTEM: ${{ steps.meta.outputs.package-ecosystem }}
+          ALLOWED_DEPENDENCY_TYPES: "*"
+          ALWAYS_ECOSYSTEMS: ""
+        run: |
+          low_risk=false
+          case "$UPDATE_TYPE" in
+            version-update:semver-patch|version-update:semver-minor) low_risk=true ;;
+          esac
+          case "$PREVIOUS_VERSION" in
+            0.*|v0.*) low_risk=false ;;
+          esac
+          if [ "$low_risk" = true ] && [ "$ALLOWED_DEPENDENCY_TYPES" != "*" ]; then
+            case " $ALWAYS_ECOSYSTEMS " in
+              *" $ECOSYSTEM "*) ;;
+              *)
+                case " $ALLOWED_DEPENDENCY_TYPES " in
+                  *" $DEPENDENCY_TYPE "*) ;;
+                  *) low_risk=false ;;
+                esac
+                ;;
+            esac
+          fi
+          echo "Update $UPDATE_TYPE from $PREVIOUS_VERSION ($ECOSYSTEM, $DEPENDENCY_TYPE): low-risk=$low_risk"
+          echo "low-risk=$low_risk" >> "$GITHUB_OUTPUT"
+
+      - name: Enable auto-merge
+        if: steps.risk.outputs.low-risk == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --squash "$PR_URL"
