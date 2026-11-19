@@ -11,6 +11,6 @@
     "check:skills": "skills add . --list"
   },
   "devDependencies": {
-    "skills": "1.7.6"
+    "skills": "1.8.1"
   }
 }
